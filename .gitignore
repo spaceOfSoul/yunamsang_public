@@ -1,0 +1,3 @@
+/static/node_modules
+.env
+kakao_token.json

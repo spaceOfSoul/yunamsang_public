@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <!-- icon -->
+    <link rel="shortcut icon" href="{{ url_for('static', filename='ico/favicon.png') }}">
+
+    <!-- Bootstrap -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+    <!-- Modal window -->
+    <script type="text/javascript" src="http://code.jquery.com/ui/1.10.1/jquery-ui.js"></script>
+    <!-- google Material icons -->
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <!-- custom css -->
+    <link rel="stylesheet" href="{{url_for('static', filename='css/style.css')}}">
+
+    <title>프로필 수정</title>
+</head>
+
+<body>
+    {% include "navBar.html"%}
+    <div class="container mt-3">
+        <div class="card">
+            <div class="container mt-3">
+                <h4>프로필 수정</h4>
+                <form action="/profile" method="POST">
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                    <div class="form-group">
+                        <label>아이디</label>
+                        <input type="text" class="form-control" name="id" placeholder="{{user_id}}">
+                    </div>
+                    {% if state == 1 %}
+                    <p class="text-danger">이미 해당 아이디를 사용중입니다.</p>
+                    {% elif state == 2 %}
+                    <p class="text-danger">해당 아이디가 이미 존재합니다.</p>
+                    {% endif %}
+                    <div class="form-group">
+                        <label>이름</label>
+                        <input type="text" class="form-control" name="nickname" placeholder="{{name}}">
+                    </div>
+                    <div class="form-group">
+                        <label>비번</label>
+                        <input type="password" class="form-control" name="pw">
+                        <label>비번 확인</label>
+                        <input type="password" class="form-control" name="pwCheck">
+                    </div>
+                    {% if state == 3 %}
+                    <p class="text-danger">두 비밀번호가 서로 일치하지 않습니다.</p>
+                    {% elif state == 4 %}
+                    <p class="text-danger">비밀번호 규칙에 어긋납니다.<br>비밀번호는 영문 대문자, 소문자, 숫자, 특수문자 조합 중 2가지 이상 8자리이거나,<br> 문자구성 상관없이 10자리 이상이어야 합니다.</p>
+                    {% endif %}
+                    <button type="submit" class="btn btn-outline-success">변경</button>
+                </form>
+            </div>
+        </div>
+    </div>
+    {% if state == 0 %}
+    <div class="alert alert-success alert-dismissible fade show" role="alert">
+        변경사항이 저장되었습니다!
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+    {% endif %}
+</body>
+
+</html>

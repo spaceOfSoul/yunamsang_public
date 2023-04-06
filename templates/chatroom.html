@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <!-- icon -->
+    <link rel="shortcut icon" href="{{ url_for('static', filename='ico/favicon.png') }}">
+
+    <!-- Latest compiled and minified CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <!-- Modal window -->
+    <script type="text/javascript" src="http://code.jquery.com/ui/1.10.1/jquery-ui.js"></script>
+
+    <!-- AJAX -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+    <!--Socket.IO-->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.5.1/socket.io.min.js" integrity="sha512-mHO4BJ0ELk7Pb1AzhTi3zvUeRgq3RXVOu9tTRfnA6qOxGK4pG2u57DJYolI4KrEnnLTcH9/J5wNOozRTDaybXg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+    <!-- Popper JS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+    <!-- Latest compiled JavaScript -->
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <!-- capture -->
+    <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
+
+    <!-- google Material icons -->
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+
+    <!-- custom css -->
+    <link rel="stylesheet" href="{{url_for('static', filename='css/style.css')}}">
+    <link rel="stylesheet" href="{{url_for('static', filename='css/chatroom.css')}}">
+    <link rel="stylesheet" href="{{url_for('static', filename='css/textChat.css')}}">
+
+    <script type="text/javascript">
+        var myRoomID = "{{room_id}}";
+        var myName = "{{display_name}}";
+        var audioMuted = "{{mute_audio}}" == "1";
+        var videoMuted = "{{mute_video}}" == "1";
+        console.log(">> {{mute_audio}}, {{mute_video}}", audioMuted, videoMuted);
+    </script>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
+    <title>Video Chat {{room_id}}</title>
+</head>
+
+<body>
+    <section id="chart_box">
+        {% include "navBar.html"%}
+        <div class="heading mb-4 container-fluid">
+            <div class="row">
+                <div class="col-sm-4">
+                    <!-- 방 정보 -->
+                    <div class="room-info">
+                        <h3>방 ID: <span class="heading-mark">{{room_id}}</span></h3>
+                        <h5>이름 : <span class="heading-mark">{{display_name}}</span></h5>
+                        <div>초대 링크: <span class="heading-mark">{{room_id}}</span></div>
+                        <div id="room_link"></div>
+                    </div>
+                </div>
+                <div class="col-sm-8">
+                    <!-- 분위기 파악 -->
+                    <div class="alert alert-secondary" role="alert">
+                        <div class="container">
+                            <div class="row">
+                                <div class="col-sm-4">
+                                    <!-- 이모티콘 -->
+                                    <p id="emotion_emoticon" style="font-size: 100px;"></p>
+                                </div>
+                                <div class="col-sm-8">
+                                    <!-- 표정 서술 -->
+                                    <p id="negat" class="text-justify" style="color : red"></p>
+                                    <p id="posit" class="text-justify" style=" color : blue"></p>
+                                    <p id="middle" class="text-justify" style="color : black"></p>
+                                    <p id="emotion_description" class="text-justify">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="container-fluid px-0 mx-0">
+            <div id="video_grid" class="video-grid"></div>
+
+            <div id="control_box" class="row control-box shadow">
+                <div class="col-7 col-md-8 col-lg-9 d-flex justify-content-around align-items-center button-box">
+                    <!-- 마이크 -->
+                    <button id="bttn_mute" class="btn btn-lg btn-outline-secondary rounded-circle">
+                    <span id="mute_icon" class="material-icons pt-2">
+                        mic
+                    </span>
+                </button>
+                    <!-- 캠 -->
+                    <button id="bttn_vid_mute" class="btn btn-lg btn-outline-secondary rounded-circle">
+                    <span id="vid_mute_icon" class="material-icons pt-2">
+                        videocam
+                    </span>
+                </button>
+                    <!-- 채팅 -->
+                    <!-- 모달 사용시 data-toggle="modal" data-target="#exampleModal" 추가 -->
+                    <button id="bttn_chat" class="btn btn-lg btn-outline-secondary rounded-circle" data-toggle="modal" data-target="#chattingModal">
+                    <span class="material-icons">
+                        question_answer
+                    </span>
+                </button>
+
+                    <!-- 메일 발송 -->
+                    <button id="capture" class="btn btn-lg btn-outline-secondary rounded-circle">
+                    <span class="material-icons">
+                        email
+                    </span>
+                </button>
+
+                    <!-- 나가기 -->
+                    <button id="call_end" class="btn btn-lg btn-danger rounded-circle">
+                    <span class="material-icons pt-2">
+                        call_end
+                    </span>
+                </button>
+                </div>
+
+                <!-- 채팅 모달창 -->
+                <div class="modal fade" id="chattingModal" tabindex="-1" role="dialog" aria-hidden="true">
+                    <div class="modal-dialog" role="document">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="exampleModalLabel">{{room_id}}</h5>
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                      </button>
+                            </div>
+                            <!-- 채팅 바디 -->
+                            <div class="modal-body">
+                                <div class="col-9 p-0">
+                                    <div class="chat-room">
+                                        <ul class="list-group chat-content">
+                                        </ul>
+                                        <form class="input-group">
+                                            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                                            <input class="form-control" id="chat-input" name="chat-input" required>
+                                            <button class="btn btn-primary" id="send">전송</button>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-dismiss="modal">닫기</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="div_local_vid" class="col-5 col-md-4 col-lg-3 video-item ml-auto">
+                    <div class="vid-wrapper">
+                        <video id="local_vid" style="transform: rotateY(180deg); -webkit-transform:rotateY(180deg); /* Safari and Chrome */ -moz-transform:rotateY(180deg); /* Firefox */" autoplay muted></video>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Scripts -->
+
+    <!-- chat -->
+    <script src="{{url_for('static', filename='js/chat/chatroomUI.js')}}"></script>
+    <script src="{{url_for('static', filename='js/chat/chatroomNetworking.js')}}"></script>
+    <script src="{{url_for('static', filename='js/chat/textChatting.js')}}"></script>
+
+    <!-- detect face -->
+    <!-- 모델(clmtrackr) -->
+    <script src="{{url_for('static', filename='models/model_pca_20_svm.js')}}"></script>
+    <!-- 모듈 -->
+    <script src="{{url_for('static', filename='modules/clmtrackr.min.js')}}"></script>
+    <script defer src="{{url_for('static', filename='node_modules/face-api.js/dist/face-api.min.js')}}"></script>
+    <!-- 표정인식 및 서술 -->
+    <script defer src="{{url_for('static', filename='js/detectFace/detecteEmotion.js')}}"></script>
+    <script defer src="{{url_for('static', filename='js/detectFace/FaceDescreption.js')}}"></script>
+    <!-- 눈 인식 -->
+    <script defer src="{{url_for('static', filename='js/detectFace/detectEye.js')}}" type="module"></script>
+    <!-- 캡쳐 및 이메일 제출 -->
+    <script src="{{url_for('static', filename='js/etc/imageCapture.js')}}"></script>
+</body>
+
+</html>

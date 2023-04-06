@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>Home</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- icon -->
+    <link rel="shortcut icon" href="{{ url_for('static', filename='ico/favicon.png') }}">
+
+    <!-- bootstrap -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.4.1/dist/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+    <!-- custom style -->
+    <link rel="stylesheet" href="{{url_for('static', filename = 'css/chatroom.css')}}">
+    <!-- custom css -->
+    <link rel="stylesheet" href="{{url_for('static', filename='css/style.css')}}">
+    <!-- Latest compiled and minified CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <!-- Modal window -->
+    <script type="text/javascript" src="http://code.jquery.com/ui/1.10.1/jquery-ui.js"></script>
+    <!-- AJAX -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+    <!-- Popper JS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+    <!-- Latest compiled JavaScript -->
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</head>
+
+<body>
+    {% include "navBar.html"%}
+    <!-- 이 위의 내용은 나중에 extends로 변경 -->
+    {% if isLogined %}
+    <div class="container text-center mt-5 other">
+        <h3>수업 참여</h3>
+        <p>
+            방 이름을 쓰고 참가 <br> 방 이름, 혹은 링크를 공유하여 다른 사람들도 참가 가능
+        </p>
+        <form id="room_form" method="POST" class="form shadow" style="max-width:400px; margin-left: auto; margin-right: auto;">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            <div class="input-group mb-3">
+                <input type="text" name="room_id" id="room_id" class="form-control" placeholder="Custom Room Name" autofocus required>
+                <div class="invalid-feedback"></div>
+                <div class="input-group-append">
+                    <input type="submit" value="Join" class="btn btn-primary">
+                </div>
+            </div>
+        </form>
+    </div>
+    {% else%}
+    <div class="jumbotron" style="background-color: rgb(162, 162, 161);">
+        <h1 class="display-4" style="color: rgb(25, 81, 144);">Do you know what i'm saying?</h1>
+        <p class="lead" style="color: rgb(25, 81, 144);">유남생은 학생들의 표정과 반응등을 바탕으로 교수자에게 실시간 피드백을 제공합니다.
+            <br> 이번 강의도 Do you know what i'm saying?
+        </p>
+        <hr class="my-4">
+        <p>로그인을 하여 이용할 수 있습니다.</p>
+        <a class="btn btn-primary btn-lg" href="/login" role="button">로그인</a>
+        <br><br>
+        <p>아직 회원이 아니라면, </p>
+        <a class="btn btn-outline-primary btn-lg" href="/signup" role="button">회원가입</a>
+    </div>
+    {% endif%}
+
+    <!-- AJAX -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+    <!--Socket.IO-->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.5.1/socket.io.min.js" integrity="sha512-mHO4BJ0ELk7Pb1AzhTi3zvUeRgq3RXVOu9tTRfnA6qOxGK4pG2u57DJYolI4KrEnnLTcH9/J5wNOozRTDaybXg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <!-- script -->
+    <script src="{{url_for('static', filename = 'js/chat.js')}}"></script>
+</body>
+
+</html>

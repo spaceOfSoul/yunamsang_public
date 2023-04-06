@@ -1,0 +1,17 @@
+body {
+    background-color: rgb(255, 255, 255);
+}
+
+.heading {
+    margin: 0px 0px 0px 0px;
+    padding: 1rem 1rem 1rem 2rem;
+    background-color: rgb(162, 162, 161);
+    color: rgb(25, 81, 144);
+}
+
+.heading-mark {
+    color: rgb(25, 81, 144);
+    font-weight: bold;
+    padding: 3px;
+    ;
+}

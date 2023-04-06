@@ -1,0 +1,30 @@
+<nav class="navbar navbar-expand-lg navbar navbar-light" style="background-color: #0063B2">
+    <a class="navbar-brand" href="/" style="color:#9CC3D5">유남생</a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarNavDropdown">
+        <ul class="navbar-nav">
+            {% if not session['_id'] %}
+            <li class="nav-item">
+                <a class="nav-link" href="/login" style="color:#9CC3D5">로그인</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="/signup" style="color:#9CC3D5">회원가입</a>
+            </li>
+            {% else %}
+            <!-- <li class="nav-item">
+                <a class="nav-link" href="/last-room">저장된 방</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="/invite">회원가입</a>
+            </li> -->
+            <li class="nav-item">
+                <a class="nav-link" href="/profile" style="color:#9CC3D5">프로필</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="/logout" style="color:#9CC3D5">로그아웃</a>
+            </li>
+            {% endif %}
+        </ul>
+</nav>
